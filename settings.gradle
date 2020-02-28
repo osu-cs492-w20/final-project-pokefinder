@@ -1,2 +1,2 @@
 include ':app'
-rootProject.name='Meal Logger'
+rootProject.name='Poke Finder'

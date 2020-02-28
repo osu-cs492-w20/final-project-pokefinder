@@ -1,4 +1,4 @@
-package com.example.android.meallogger;
+package com.example.android.pokefinder;
 
 import android.content.Context;
 

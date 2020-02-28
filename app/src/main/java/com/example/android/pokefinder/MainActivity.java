@@ -1,4 +1,4 @@
-package com.example.android.meallogger;
+package com.example.android.pokefinder;
 
 import androidx.appcompat.app.AppCompatActivity;
 
