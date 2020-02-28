@@ -9,14 +9,11 @@ import com.google.gson.Gson;
 
 import java.io.Serializable;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.TimeZone;
+
 
 public class PokeUtils {
 
-    public static final String EXTRA_FORECAST_ITEM = "com.example.android.sqliteweather.utils.ForecastItem";
+    public static final String EXTRA_POKEMON_ITEM = "com.example.android.pokefinder.utils.Pokemon";
 
     private final static String POKE_BASE_URL = "https://pokeapi.co/api/v2/";
     private final static String POKE_POKEMON_PATH = "pokemon";
@@ -50,18 +47,24 @@ public class PokeUtils {
 
     public static Pokemon parsePokemonJSON(String PokemonJSON) {
         Gson gson = new Gson();
-        PokemonResults results = gson.fromJson(PokemonJSON, PokemonResults.class);
-        if (results != null) {
-            Pokemon mPokemon = new Pokemon();
+        try {
+            PokemonResults results = gson.fromJson(PokemonJSON, PokemonResults.class);
 
-            mPokemon.id = results.id;
-            mPokemon.name = results.name;
+            if (results != null) {
+                Pokemon mPokemon = new Pokemon();
 
-            mPokemon.weight = results.weight;
-            mPokemon.height = results.height;
+                mPokemon.id = results.id;
+                mPokemon.name = results.name;
 
-            return mPokemon;
-        } else {
+                mPokemon.weight = results.weight;
+                mPokemon.height = results.height;
+
+                return mPokemon;
+            } else {
+                return null;
+            }
+        }
+        catch(Exception e){
             return null;
         }
     }
