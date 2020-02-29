@@ -2,6 +2,7 @@ package com.example.android.pokefinder;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -18,7 +20,11 @@ import com.example.android.pokefinder.data.Pokemon;
 import com.example.android.pokefinder.data.Status;
 import com.example.android.pokefinder.utils.PokeUtils;
 
+import java.util.List;
+
 public class PokemonDetailActivity extends AppCompatActivity{
+
+    private static final String TAG = PokemonDetailActivity.class.getSimpleName();
 
     public static final String EXTRA_POKEMON = "Pikachu";
 
@@ -34,6 +40,7 @@ public class PokemonDetailActivity extends AppCompatActivity{
     private Pokemon mPokemon;
     private boolean mIsSaved = false;
 
+    Menu mOptionsMenu = null;
 
 
     @Override
@@ -66,6 +73,7 @@ public class PokemonDetailActivity extends AppCompatActivity{
             Glide.with(this).load(iconURL).into(mPokemonIconIV);
         }
 
+        mViewModel.loadPokemonResults();
 
 
 
@@ -74,6 +82,24 @@ public class PokemonDetailActivity extends AppCompatActivity{
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.pokemon_item_detail, menu);
+
+        mOptionsMenu = menu;
+
+        mViewModel.getAllPokemon().observe(this, new Observer<List<Pokemon>>() {
+            @Override
+            public void onChanged(@Nullable List<Pokemon> pokemonList) {
+                Log.d(TAG, pokemonList.toString());
+                mIsSaved = pokemonList != null && pokemonList.contains(mPokemon);
+                MenuItem item = mOptionsMenu.findItem(R.id.action_favorite);
+                if (mIsSaved) {
+                    item.setIcon(R.drawable.ic_bookmark_black);
+                } else {
+                    item.setIcon(R.drawable.ic_bookmark_border);
+                }
+
+            }
+        });
+
         return true;
     }
 
@@ -83,13 +109,15 @@ public class PokemonDetailActivity extends AppCompatActivity{
             case R.id.action_favorite:
                 if (mPokemon != null) {
                     mIsSaved = !mIsSaved;
+                    String str = mPokemon.name;
+                    String output = str.substring(0, 1).toUpperCase() + str.substring(1);
                     if (mIsSaved) {
                         mViewModel.insert(mPokemon);
-                        makeToast(mPokemon.name + " is saved");
+                        makeToast(output + " is saved");
                         item.setIcon(R.drawable.ic_bookmark_black);
                     } else {
                         mViewModel.delete(mPokemon);
-                        makeToast(mPokemon.name +  " is no longer saved");
+                        makeToast(output + " is no longer saved");
                         item.setIcon(R.drawable.ic_bookmark_border);
                     }
                 }

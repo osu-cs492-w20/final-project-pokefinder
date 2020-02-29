@@ -36,7 +36,7 @@ public class PokeUtils {
     public static String buildPokemonURL(String pokemonName) {
         return Uri.parse(POKE_BASE_URL).buildUpon()
                 .appendPath(POKE_POKEMON_PATH)
-                .appendPath(pokemonName)
+                .appendPath(pokemonName.toLowerCase())
                 .build()
                 .toString();
     }

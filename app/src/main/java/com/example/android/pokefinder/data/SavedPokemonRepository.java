@@ -2,13 +2,17 @@ package com.example.android.pokefinder.data;
 
 import android.app.Application;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+
 import java.util.List;
 
 public class SavedPokemonRepository implements GetAllPokemonTask.AsyncCallback{
+    private static final String TAG = SavedPokemonRepository.class.getSimpleName();
+
     private SavedPokemonDao mSavedPokemonDao;
     private MutableLiveData<List<Pokemon>> mPokemonList;
 
@@ -63,7 +67,7 @@ public class SavedPokemonRepository implements GetAllPokemonTask.AsyncCallback{
 
     @Override
     public void onPokemonGetAllFinished(List<Pokemon> myPokemonList){
-        mPokemonList.setValue(myPokemonList);
+            mPokemonList.setValue(myPokemonList);
     }
 
     public LiveData<List<Pokemon>> getAllPokemon(){ return mPokemonList; }

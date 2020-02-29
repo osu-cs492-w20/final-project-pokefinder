@@ -17,4 +17,17 @@ public class Pokemon implements Serializable {
 
     public int weight;
     public int height;
+
+    @Override
+    public boolean equals(Object other) {
+        if(this == other)
+            return true;
+        if(other == null)
+            return false;
+        if(getClass() != other.getClass())
+            return false;
+
+        Pokemon test = (Pokemon)other;
+        return this.id == test.id;
+    }
 }
