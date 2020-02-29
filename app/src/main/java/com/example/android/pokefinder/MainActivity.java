@@ -76,8 +76,6 @@ public class MainActivity extends AppCompatActivity{
                 }
             }
         });
-
-
     }
 
     public void onPokemonSearched(Pokemon pokemon) {
@@ -98,6 +96,8 @@ public class MainActivity extends AppCompatActivity{
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_favorites:
+                Intent favoritesIntent = new Intent(this, PokemonFavoritesActivity.class);
+                startActivity(favoritesIntent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -105,7 +105,6 @@ public class MainActivity extends AppCompatActivity{
     }
 
     private void doPokemonSearch(String searchQuery) {
-
         mViewModel.loadSearchResults(searchQuery);
     }
 }

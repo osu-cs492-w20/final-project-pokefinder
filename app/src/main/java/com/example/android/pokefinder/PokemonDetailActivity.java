@@ -10,12 +10,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.example.android.pokefinder.data.Pokemon;
+import com.example.android.pokefinder.data.Status;
 import com.example.android.pokefinder.utils.PokeUtils;
 
-public class PokemonDetailActivity extends AppCompatActivity {
+public class PokemonDetailActivity extends AppCompatActivity{
 
     public static final String EXTRA_POKEMON = "Pikachu";
 
@@ -24,15 +27,21 @@ public class PokemonDetailActivity extends AppCompatActivity {
     private TextView mNameTV;
     private ImageView mPokemonIconIV;
 
+    private SavedPokemonViewModel mViewModel;
+
     private Toast mToast;
 
     private Pokemon mPokemon;
     private boolean mIsSaved = false;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pokemon_item_detail);
+
+        mViewModel = new ViewModelProvider(this).get(SavedPokemonViewModel.class);
 
         mToast = null;
 
@@ -57,6 +66,9 @@ public class PokemonDetailActivity extends AppCompatActivity {
             Glide.with(this).load(iconURL).into(mPokemonIconIV);
         }
 
+
+
+
     }
 
     @Override
@@ -72,9 +84,11 @@ public class PokemonDetailActivity extends AppCompatActivity {
                 if (mPokemon != null) {
                     mIsSaved = !mIsSaved;
                     if (mIsSaved) {
+                        mViewModel.insert(mPokemon);
                         makeToast(mPokemon.name + " is saved");
                         item.setIcon(R.drawable.ic_bookmark_black);
                     } else {
+                        mViewModel.delete(mPokemon);
                         makeToast(mPokemon.name +  " is no longer saved");
                         item.setIcon(R.drawable.ic_bookmark_border);
                     }
@@ -92,5 +106,4 @@ public class PokemonDetailActivity extends AppCompatActivity {
         mToast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
         mToast.show();
     }
-
 }

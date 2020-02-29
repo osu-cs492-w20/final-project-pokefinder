@@ -7,6 +7,8 @@ import android.util.Log;
 
 import com.example.android.pokefinder.utils.PokeUtils;
 
+import java.util.List;
+
 /*
  * This is our Repository class for fetching forecast data from OpenWeatherMap.  One of the keys
  * to this class is the usage of LiveData, which is a lifecycle-aware data container that can be
