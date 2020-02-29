@@ -60,7 +60,6 @@ public class MainActivity extends AppCompatActivity{
                 } else if (status == Status.SUCCESS) {
                     mLoadingIndicatorPB.setVisibility(View.INVISIBLE);
                 } else {
-                    Log.d(TAG, "There was an error getting that Pokemon");
                     mLoadingIndicatorPB.setVisibility(View.INVISIBLE);
                     mErrorMessageTV.setVisibility(View.VISIBLE);
                 }
