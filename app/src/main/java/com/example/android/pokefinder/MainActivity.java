@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity{
             public void onClick(View v) {
                 String searchQuery = mSearchBoxET.getText().toString();
                 if (!TextUtils.isEmpty(searchQuery)) {
-                    doGitHubSearch(searchQuery);
+                    doPokemonSearch(searchQuery);
                 }
             }
         });
@@ -88,9 +88,23 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_favorites:
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
-    private void doGitHubSearch(String searchQuery) {
+    private void doPokemonSearch(String searchQuery) {
 
         mViewModel.loadSearchResults(searchQuery);
     }
