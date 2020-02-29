@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.android.pokefinder.data.Pokemon;
-import com.example.android.pokefinder.utils.PokeUtils;
 
 import java.util.List;
 

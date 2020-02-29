@@ -19,6 +19,7 @@ import com.bumptech.glide.Glide;
 import com.example.android.pokefinder.data.Pokemon;
 import com.example.android.pokefinder.data.Status;
 import com.example.android.pokefinder.utils.PokeUtils;
+import com.example.android.pokefinder.utils.StringCaps;
 
 import java.util.List;
 
@@ -57,9 +58,7 @@ public class PokemonDetailActivity extends AppCompatActivity{
             mPokemon = (Pokemon) intent.getSerializableExtra(EXTRA_POKEMON);
 
             mNameTV = findViewById(R.id.name);
-            String str = mPokemon.name;
-            String output = str.substring(0, 1).toUpperCase() + str.substring(1);
-            mNameTV.setText(output);
+            mNameTV.setText(StringCaps.capitalizeFirstLetter(mPokemon.name));
 
             mWeightTV = findViewById(R.id.weight);
             mWeightTV.setText(String.format("Weight: %s kg", Float.toString((float) mPokemon.weight / 10)));
@@ -88,7 +87,6 @@ public class PokemonDetailActivity extends AppCompatActivity{
         mViewModel.getAllPokemon().observe(this, new Observer<List<Pokemon>>() {
             @Override
             public void onChanged(@Nullable List<Pokemon> pokemonList) {
-                Log.d(TAG, pokemonList.toString());
                 mIsSaved = pokemonList != null && pokemonList.contains(mPokemon);
                 MenuItem item = mOptionsMenu.findItem(R.id.action_favorite);
                 if (mIsSaved) {
@@ -109,8 +107,7 @@ public class PokemonDetailActivity extends AppCompatActivity{
             case R.id.action_favorite:
                 if (mPokemon != null) {
                     mIsSaved = !mIsSaved;
-                    String str = mPokemon.name;
-                    String output = str.substring(0, 1).toUpperCase() + str.substring(1);
+                    String output = StringCaps.capitalizeFirstLetter(mPokemon.name);
                     if (mIsSaved) {
                         mViewModel.insert(mPokemon);
                         makeToast(output + " is saved");

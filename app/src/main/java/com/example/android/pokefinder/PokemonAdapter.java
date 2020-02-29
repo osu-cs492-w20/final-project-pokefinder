@@ -2,6 +2,8 @@ package com.example.android.pokefinder;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+
+import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,6 +17,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.android.pokefinder.data.Pokemon;
 import com.example.android.pokefinder.utils.PokeUtils;
+import com.example.android.pokefinder.utils.StringCaps;
 
 import java.util.List;
 
@@ -29,11 +32,11 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.PokemonV
         void onPokemonClick(Pokemon pokemon);
     }
 
-    public PokemonAdapter(OnPokemonClickListener clickListener) {
+    PokemonAdapter(OnPokemonClickListener clickListener) {
         mPokemonClickListener = clickListener;
     }
 
-    public void updatePokemon(List<Pokemon> pokemonList) {
+    void updatePokemon(List<Pokemon> pokemonList) {
         mPokemon = pokemonList;
         notifyDataSetChanged();
     }
@@ -48,6 +51,7 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.PokemonV
     }
 
     @Override
+    @NonNull
     public PokemonViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View itemView = inflater.inflate(R.layout.pokemon_favorite_card, parent, false);
@@ -63,19 +67,19 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.PokemonV
         private TextView mPokemonNameTV;
         private ImageView mPokemonIconIV;
 
-        public PokemonViewHolder(View itemView) {
+        PokemonViewHolder(View itemView) {
             super(itemView);
             mPokemonNameTV = itemView.findViewById(R.id.tv_pokemon_name);
             mPokemonIconIV = itemView.findViewById(R.id.iv_pokemon_icon);
             itemView.setOnClickListener(this);
         }
 
-        public void bind(Pokemon pokemon) {
+        void bind(Pokemon pokemon) {
 
             String iconURL = PokeUtils.buildPokemonIconURL(Integer.toString(pokemon.id));
             Glide.with(mPokemonIconIV.getContext()).load(iconURL).into(mPokemonIconIV);
 
-            mPokemonNameTV.setText(pokemon.name);
+            mPokemonNameTV.setText(StringCaps.capitalizeFirstLetter(pokemon.name));
         }
 
         @Override
