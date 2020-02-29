@@ -27,7 +27,6 @@ class LoadPokemonTask extends AsyncTask<Void, Void, String> {
     protected String doInBackground(Void... voids) {
         String pokemonJSON = null;
         try {
-            Log.d(TAG, "fetching MORE pokemon data with this URL: " + mURL);
             pokemonJSON = NetworkUtils.doHTTPGet(mURL);
         } catch (IOException e) {
             e.printStackTrace();
@@ -39,8 +38,13 @@ class LoadPokemonTask extends AsyncTask<Void, Void, String> {
     protected void onPostExecute(String s) {
         Pokemon mPokemon = null;
         if (s != null) {
-            mPokemon = PokeUtils.parsePokemonJSON(s);
+            try {
+                mPokemon = PokeUtils.parsePokemonJSON(s);
+                mCallback.onPokemonLoadFinished(mPokemon);
+            }
+            catch(Exception e){
+                mCallback.onPokemonLoadFinished(null);
+            }
         }
-        mCallback.onPokemonLoadFinished(mPokemon);
     }
 }

@@ -47,7 +47,6 @@ public class PokeUtils {
 
     public static Pokemon parsePokemonJSON(String PokemonJSON) {
         Gson gson = new Gson();
-        try {
             PokemonResults results = gson.fromJson(PokemonJSON, PokemonResults.class);
 
             if (results != null) {
@@ -63,9 +62,5 @@ public class PokeUtils {
             } else {
                 return null;
             }
-        }
-        catch(Exception e){
-            return null;
-        }
     }
 }

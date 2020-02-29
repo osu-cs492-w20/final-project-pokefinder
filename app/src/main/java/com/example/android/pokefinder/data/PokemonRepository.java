@@ -109,10 +109,10 @@ public class PokemonRepository implements LoadPokemonTask.AsyncCallback {
     @Override
     public void onPokemonLoadFinished(Pokemon pokemon) {
         mPokemon.setValue(pokemon);
-        if (mPokemon != null) {
-            mLoadingStatus.setValue(Status.SUCCESS);
-        } else {
+        if (pokemon == null) {
             mLoadingStatus.setValue(Status.ERROR);
+        } else {
+            mLoadingStatus.setValue(Status.SUCCESS);
         }
     }
 }

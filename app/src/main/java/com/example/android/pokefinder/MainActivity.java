@@ -6,7 +6,9 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.app.ActionBar;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.view.View;
 import android.text.TextUtils;
@@ -57,8 +59,8 @@ public class MainActivity extends AppCompatActivity{
                     mLoadingIndicatorPB.setVisibility(View.VISIBLE);
                 } else if (status == Status.SUCCESS) {
                     mLoadingIndicatorPB.setVisibility(View.INVISIBLE);
-                    mErrorMessageTV.setVisibility(View.INVISIBLE);
                 } else {
+                    Log.d(TAG, "There was an error getting that Pokemon");
                     mLoadingIndicatorPB.setVisibility(View.INVISIBLE);
                     mErrorMessageTV.setVisibility(View.VISIBLE);
                 }
