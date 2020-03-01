@@ -1,13 +1,8 @@
 package com.example.android.pokefinder;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-
 import androidx.annotation.NonNull;
-import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +12,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.android.pokefinder.data.Pokemon;
 import com.example.android.pokefinder.utils.PokeUtils;
-import com.example.android.pokefinder.utils.StringCaps;
 
 import java.util.List;
 
@@ -59,7 +53,7 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.PokemonV
     }
 
     @Override
-        public void onBindViewHolder(PokemonViewHolder holder, int position) {
+    public void onBindViewHolder(PokemonViewHolder holder, int position) {
         holder.bind(mPokemon.get(position));
     }
 
@@ -79,7 +73,7 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.PokemonV
             String iconURL = PokeUtils.buildPokemonIconURL(Integer.toString(pokemon.id));
             Glide.with(mPokemonIconIV.getContext()).load(iconURL).into(mPokemonIconIV);
 
-            mPokemonNameTV.setText(StringCaps.capitalizeFirstLetter(pokemon.name));
+            mPokemonNameTV.setText(PokeUtils.capitalizeFirstLetter(pokemon.name));
         }
 
         @Override

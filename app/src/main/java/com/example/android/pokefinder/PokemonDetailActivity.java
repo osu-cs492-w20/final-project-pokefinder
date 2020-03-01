@@ -2,10 +2,8 @@ package com.example.android.pokefinder;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,12 +12,15 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.android.pokefinder.data.Pokemon;
-import com.example.android.pokefinder.data.Status;
 import com.example.android.pokefinder.utils.PokeUtils;
-import com.example.android.pokefinder.utils.StringCaps;
+import com.google.android.flexbox.FlexDirection;
+import com.google.android.flexbox.FlexboxLayoutManager;
+import com.google.android.flexbox.JustifyContent;
 
 import java.util.List;
 
@@ -42,14 +43,29 @@ public class PokemonDetailActivity extends AppCompatActivity{
     private boolean mIsSaved = false;
 
     Menu mOptionsMenu = null;
-
+    private RecyclerView mPokemonTypesRV;
+    private PokemonTypeAdapter mPokemonTypeAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pokemon_item_detail);
 
+        mPokemonTypesRV = findViewById(R.id.rv_pokemon_types);
+
         mViewModel = new ViewModelProvider(this).get(SavedPokemonViewModel.class);
+
+        mPokemonTypeAdapter = new PokemonTypeAdapter();
+        mPokemonTypesRV.setAdapter(mPokemonTypeAdapter);
+
+        LinearLayoutManager horizontalLayout
+                = new LinearLayoutManager(
+                this,
+                LinearLayoutManager.HORIZONTAL,
+                false);
+        mPokemonTypesRV.setLayoutManager(horizontalLayout);
+        //mPokemonTypesRV.setLayoutManager(layoutManager);
+        mPokemonTypesRV.setHasFixedSize(true);
 
         mToast = null;
 
@@ -58,7 +74,7 @@ public class PokemonDetailActivity extends AppCompatActivity{
             mPokemon = (Pokemon) intent.getSerializableExtra(EXTRA_POKEMON);
 
             mNameTV = findViewById(R.id.name);
-            mNameTV.setText(StringCaps.capitalizeFirstLetter(mPokemon.name));
+            mNameTV.setText(PokeUtils.capitalizeFirstLetter(mPokemon.name));
 
             mWeightTV = findViewById(R.id.weight);
             mWeightTV.setText(String.format("Weight: %s kg", Float.toString((float) mPokemon.weight / 10)));
@@ -67,6 +83,8 @@ public class PokemonDetailActivity extends AppCompatActivity{
             mHeightTV.setText(String.format("Height: %s m", Float.toString((float) mPokemon.height / 10)));
 
             String iconURL = PokeUtils.buildPokemonIconURL(Integer.toString(mPokemon.id));
+
+            mPokemonTypeAdapter.updatePokemonTypes(mPokemon.types);
 
             mPokemonIconIV = findViewById(R.id.pokemon_image);
             Glide.with(this).load(iconURL).into(mPokemonIconIV);
@@ -107,7 +125,7 @@ public class PokemonDetailActivity extends AppCompatActivity{
             case R.id.action_favorite:
                 if (mPokemon != null) {
                     mIsSaved = !mIsSaved;
-                    String output = StringCaps.capitalizeFirstLetter(mPokemon.name);
+                    String output = PokeUtils.capitalizeFirstLetter(mPokemon.name);
                     if (mIsSaved) {
                         mViewModel.insert(mPokemon);
                         makeToast(output + " is saved");

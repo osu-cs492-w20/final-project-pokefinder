@@ -43,6 +43,7 @@ class LoadPokemonTask extends AsyncTask<Void, Void, String> {
                 mCallback.onPokemonLoadFinished(mPokemon);
             }
             catch(Exception e){
+                e.printStackTrace();
                 mCallback.onPokemonLoadFinished(null);
             }
         }
