@@ -7,7 +7,7 @@
     <string name="pokemon_name_sample_text">Pikachu</string>
     <string name="pokemon_weight_sample_text">Weight</string>
     <string name="pokemon_height_sample_text">Height</string>
-    <string name="pokemon_type_text">Types</string>
+    <string name="pokemon_type_text">Type</string>
 
     <string name="action_favorite">Favorite this Pokemon</string>
     <string name="loading_error">This Pokemon cannot be found. Check your WiFi connection.</string>

@@ -9,6 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -50,6 +51,8 @@ public class PokemonDetailActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pokemon_item_detail);
+
+
 
         mPokemonTypesRV = findViewById(R.id.rv_pokemon_types);
 
@@ -100,6 +103,10 @@ public class PokemonDetailActivity extends AppCompatActivity{
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.pokemon_item_detail, menu);
 
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
         mOptionsMenu = menu;
 
         mViewModel.getAllPokemon().observe(this, new Observer<List<Pokemon>>() {
@@ -137,6 +144,8 @@ public class PokemonDetailActivity extends AppCompatActivity{
                     }
                 }
                 return true;
+            case android.R.id.home:
+                onBackPressed();
             default:
                 return super.onOptionsItemSelected(item);
         }

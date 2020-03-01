@@ -1,12 +1,17 @@
 package com.example.android.pokefinder;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.example.android.pokefinder.utils.PokeUtils;
+import com.google.android.material.chip.Chip;
 
 import java.util.List;
 
@@ -44,15 +49,17 @@ public class PokemonTypeAdapter extends RecyclerView.Adapter<PokemonTypeAdapter.
     }
 
     class PokemonTypeViewHolder extends RecyclerView.ViewHolder {
-        private TextView mTypesNameTV;
+        private Chip mTypesNameChip;
 
         PokemonTypeViewHolder(View itemView) {
             super(itemView);
-            mTypesNameTV = itemView.findViewById(R.id.tv_pokemon_type);
+            mTypesNameChip = itemView.findViewById(R.id.tv_pokemon_type);
         }
 
         void bind(String pokemonType) {
-            mTypesNameTV.setText(pokemonType);
+            String output = PokeUtils.capitalizeFirstLetter(pokemonType);
+            mTypesNameChip.setText(output);
+            mTypesNameChip.setChipBackgroundColor(ColorStateList.valueOf(PokeUtils.getColorByType(output)));
         }
     }
 }

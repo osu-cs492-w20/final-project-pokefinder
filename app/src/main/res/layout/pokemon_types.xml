@@ -4,14 +4,14 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-         <TextView
-                android:id="@+id/tv_pokemon_type"
-                android:text="@string/pokemon_type_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:textSize="16sp"
-                android:textColor="#000"/>
-
+    <com.google.android.material.chip.Chip
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:layout_margin="4dp"
+        android:textSize="16sp"
+        android:textColor="#000"
+        android:text="@string/pokemon_type_text"
+        android:id="@+id/tv_pokemon_type"/>
 
 </LinearLayout>
