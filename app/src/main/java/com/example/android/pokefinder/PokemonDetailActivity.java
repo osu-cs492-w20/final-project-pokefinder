@@ -2,8 +2,10 @@ package com.example.android.pokefinder;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,9 +21,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.android.pokefinder.data.Pokemon;
 import com.example.android.pokefinder.utils.PokeUtils;
-import com.google.android.flexbox.FlexDirection;
-import com.google.android.flexbox.FlexboxLayoutManager;
-import com.google.android.flexbox.JustifyContent;
 
 import java.util.List;
 
@@ -34,12 +33,13 @@ public class PokemonDetailActivity extends AppCompatActivity{
     private TextView mHeightTV;
     private TextView mWeightTV;
     private TextView mNameTV;
+    private TextView mEvolvesFromTV;
     private ImageView mPokemonIconIV;
+    private ImageView mPokemonEvolvesFromIconIV;
 
     private SavedPokemonViewModel mViewModel;
 
     private Toast mToast;
-
     private Pokemon mPokemon;
     private boolean mIsSaved = false;
 
@@ -52,14 +52,9 @@ public class PokemonDetailActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pokemon_item_detail);
 
-
-
         mPokemonTypesRV = findViewById(R.id.rv_pokemon_types);
 
         mViewModel = new ViewModelProvider(this).get(SavedPokemonViewModel.class);
-
-        mPokemonTypeAdapter = new PokemonTypeAdapter();
-        mPokemonTypesRV.setAdapter(mPokemonTypeAdapter);
 
         LinearLayoutManager horizontalLayout
                 = new LinearLayoutManager(
@@ -70,11 +65,30 @@ public class PokemonDetailActivity extends AppCompatActivity{
         //mPokemonTypesRV.setLayoutManager(layoutManager);
         mPokemonTypesRV.setHasFixedSize(true);
 
+        mPokemonTypeAdapter = new PokemonTypeAdapter();
+        mPokemonTypesRV.setAdapter(mPokemonTypeAdapter);
+
         mToast = null;
 
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra(EXTRA_POKEMON)) {
             mPokemon = (Pokemon) intent.getSerializableExtra(EXTRA_POKEMON);
+
+            mEvolvesFromTV = findViewById(R.id.tv_evolves_from);
+            mPokemonEvolvesFromIconIV = findViewById(R.id.pokemon_evolve_from_image);
+            /*
+             * This pokemon evolves from another pokemon
+             */
+            if(mPokemon.evolves_from != null) {
+                mEvolvesFromTV.setText(PokeUtils.capitalizeFirstLetter(mPokemon.evolves_from));
+            }
+            /*
+             * This pokemon is at the base of the evolution tree.
+             */
+            else{
+                mEvolvesFromTV.setText(R.string.no_evolution_from);
+                mPokemonEvolvesFromIconIV.setVisibility(View.GONE);
+            }
 
             mNameTV = findViewById(R.id.name);
             mNameTV.setText(PokeUtils.capitalizeFirstLetter(mPokemon.name));
@@ -87,6 +101,7 @@ public class PokemonDetailActivity extends AppCompatActivity{
 
             String iconURL = PokeUtils.buildPokemonIconURL(Integer.toString(mPokemon.id));
 
+            Log.d(TAG, mPokemon.types.get(0));
             mPokemonTypeAdapter.updatePokemonTypes(mPokemon.types);
 
             mPokemonIconIV = findViewById(R.id.pokemon_image);
@@ -94,9 +109,6 @@ public class PokemonDetailActivity extends AppCompatActivity{
         }
 
         mViewModel.loadPokemonResults();
-
-
-
     }
 
     @Override

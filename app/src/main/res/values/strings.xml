@@ -14,4 +14,10 @@
 
     <string name="action_list_favorites">View favorites</string>
     <string name="favorites">Favorites</string>
+    <string name="defaut_sample_text">Sample Text</string>
+
+    <string name="evolves_from">Evolves from</string>
+    <string name="no_evolution_from">[None]</string>
+
+    <string name="picture_content_description">Image of Pokemon</string>
 </resources>

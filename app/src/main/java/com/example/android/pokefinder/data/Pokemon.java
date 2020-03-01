@@ -1,6 +1,5 @@
 package com.example.android.pokefinder.data;
 
-import androidx.annotation.NonNull;
 import androidx.room.PrimaryKey;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -14,14 +13,14 @@ import androidx.room.TypeConverters;
 @Entity(tableName = "pokemon")
 public class Pokemon implements Serializable {
     @PrimaryKey
-    @NonNull
     public int id;
 
-    @NonNull
     public String name;
 
     public int weight;
     public int height;
+
+    public String evolves_from;
 
     public ArrayList<String> types;
 

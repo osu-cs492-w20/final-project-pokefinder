@@ -2,8 +2,11 @@ package com.example.android.pokefinder;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -11,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.android.pokefinder.data.Pokemon;
+import com.example.android.pokefinder.utils.PokeUtils;
 
 import java.util.List;
 
@@ -62,6 +66,26 @@ public class PokemonFavoritesActivity extends AppCompatActivity implements Pokem
             Intent intent = new Intent(this, PokemonDetailActivity.class);
             intent.putExtra(PokemonDetailActivity.EXTRA_POKEMON, pokemon);
             startActivity(intent);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 

@@ -17,10 +17,9 @@ import java.util.List;
 
 public class PokeUtils {
 
-    public static final String EXTRA_POKEMON_ITEM = "com.example.android.pokefinder.utils.Pokemon";
-
     private final static String POKE_BASE_URL = "https://pokeapi.co/api/v2/";
     private final static String POKE_POKEMON_PATH = "pokemon";
+    private final static String POKE_POKEMON_SPECIES_PATH = "pokemon-species";
     private final static String POKE_URL_FORMAT_STR = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/%s.png";
 
 
@@ -39,6 +38,14 @@ public class PokeUtils {
         ArrayList<PokemonType> types;
     }
 
+    static class PokemonEvolutionResults{
+        PokemonSpecies evolves_from_species;
+    }
+
+    static class PokemonSpecies{
+        String name;
+    }
+
     static class PokemonType {
         PokemonTypeDetail type;
     }
@@ -55,12 +62,36 @@ public class PokeUtils {
                 .toString();
     }
 
+    public static String buildPokemonSpeciesURL(String pokemonName) {
+        return Uri.parse(POKE_BASE_URL).buildUpon()
+                .appendPath(POKE_POKEMON_SPECIES_PATH)
+                .appendPath(pokemonName.toLowerCase())
+                .build()
+                .toString();
+    }
+
     public static String buildPokemonIconURL(String pokemonID) {
         return String.format(POKE_URL_FORMAT_STR, pokemonID);
     }
 
     public static String capitalizeFirstLetter(String str){
         return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+
+    public static Pokemon parsePokemonEvolutionJSON(String PokemonEvolutionJSON, Pokemon pokemon){
+        Gson gson = new Gson();
+        PokemonEvolutionResults results = gson.fromJson(PokemonEvolutionJSON, PokemonEvolutionResults.class);
+
+        if (results != null) {
+            if (results.evolves_from_species != null) {
+                pokemon.evolves_from = results.evolves_from_species.name;
+            } else{
+                pokemon.evolves_from = null;
+            }
+            return pokemon;
+        } else {
+            return null;
+        }
     }
 
     public static Pokemon parsePokemonJSON(String PokemonJSON) {
@@ -76,7 +107,7 @@ public class PokeUtils {
                 mPokemon.weight = results.weight;
                 mPokemon.height = results.height;
 
-                mPokemon.types = new ArrayList<String>();
+                mPokemon.types = new ArrayList<>();
 
                 for(PokemonType typeItem: results.types){
                     mPokemon.types.add(typeItem.type.name);
@@ -111,7 +142,6 @@ public class PokeUtils {
 
 
             case "Electric":
-                Log.d("DEBUG", "Electric type!");
                 return Color.parseColor("#E9CA3C");
 
 

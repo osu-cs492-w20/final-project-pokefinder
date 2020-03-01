@@ -23,7 +23,7 @@
                 android:orientation="vertical"
                 android:layout_gravity="center_horizontal"
 
-                android:paddingTop="150dp"
+                android:paddingTop="200dp"
                 android:paddingHorizontal="16dp"
                 android:paddingBottom="16dp"
                 android:layout_width="match_parent"
@@ -64,10 +64,35 @@
                     android:id="@+id/rv_pokemon_types"
                     android:scrollbars="none"
                     android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:text="@string/evolves_from"
+                    android:textSize="20sp"
+                    android:id="@+id/tv_evolves_from_static"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
-            </LinearLayout>
+                <ImageView
+                    android:id="@+id/pokemon_evolve_from_image"
+                    android:src="@drawable/ic_launcher_background"
+                    android:layout_gravity="center_horizontal"
+                    android:contentDescription="@string/picture_content_description"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp" />
 
+                <TextView
+                    android:id="@+id/tv_evolves_from"
+                    android:text="@string/pokemon_name_sample_text"
+                    android:textSize="15sp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+
+
+            </LinearLayout>
 
 
 
@@ -78,8 +103,11 @@
         android:src="@drawable/ic_launcher_background"
         android:layout_alignTop="@+id/card_view"
         android:layout_centerHorizontal="true"
-        android:layout_width="150dp"
-        android:layout_height="150dp" />
+        android:contentDescription="@string/picture_content_description"
+        android:layout_width="200dp"
+        android:layout_height="200dp" />
+
+
 
 
 

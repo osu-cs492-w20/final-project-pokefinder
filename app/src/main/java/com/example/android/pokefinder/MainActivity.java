@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity{
 
     private PokemonViewModel mViewModel;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,13 +44,6 @@ public class MainActivity extends AppCompatActivity{
 
         mViewModel = new ViewModelProvider(this).get(PokemonViewModel.class);
 
-        mViewModel.getSearchResults().observe(this, new Observer<Pokemon>() {
-            @Override
-            public void onChanged(Pokemon pokemon) {
-                onPokemonSearched(pokemon);
-            }
-        });
-
         mViewModel.getLoadingStatus().observe(this, new Observer<Status>() {
             @Override
             public void onChanged(Status status) {
@@ -59,6 +51,8 @@ public class MainActivity extends AppCompatActivity{
                     mLoadingIndicatorPB.setVisibility(View.VISIBLE);
                 } else if (status == Status.SUCCESS) {
                     mLoadingIndicatorPB.setVisibility(View.INVISIBLE);
+                    Pokemon pokemon = mViewModel.getSearchResults().getValue();
+                    onPokemonSearched(pokemon);
                 } else {
                     mLoadingIndicatorPB.setVisibility(View.INVISIBLE);
                     mErrorMessageTV.setVisibility(View.VISIBLE);

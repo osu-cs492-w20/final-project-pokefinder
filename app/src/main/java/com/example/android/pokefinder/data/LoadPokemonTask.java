@@ -2,6 +2,7 @@ package com.example.android.pokefinder.data;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import android.util.Pair;
 
 import com.example.android.pokefinder.utils.NetworkUtils;
 import com.example.android.pokefinder.utils.PokeUtils;
@@ -13,14 +14,19 @@ class LoadPokemonTask extends AsyncTask<Void, Void, String> {
 
     public interface AsyncCallback {
         void onPokemonLoadFinished(Pokemon mPokemon);
+        void onPokemonSpeciesLoadFinished(Pokemon mPokemon);
     }
 
+    private Pokemon mPokemon;
     private String mURL;
+    private String mRequestType;
     private AsyncCallback mCallback;
 
-    LoadPokemonTask(String url, AsyncCallback callback) {
+    LoadPokemonTask(String url, String requestType, Pokemon pokemon, AsyncCallback callback) {
+        mRequestType = requestType;
         mURL = url;
         mCallback = callback;
+        mPokemon = pokemon;
     }
 
     @Override
@@ -36,11 +42,17 @@ class LoadPokemonTask extends AsyncTask<Void, Void, String> {
 
     @Override
     protected void onPostExecute(String s) {
-        Pokemon mPokemon = null;
         if (s != null) {
             try {
-                mPokemon = PokeUtils.parsePokemonJSON(s);
-                mCallback.onPokemonLoadFinished(mPokemon);
+                Pokemon pokemon;
+                if (mRequestType.equals("pokemon")) {
+                    pokemon = PokeUtils.parsePokemonJSON(s);
+                    mCallback.onPokemonLoadFinished(pokemon);
+                }
+                else if(mRequestType.equals("pokemon-species")){
+                    pokemon = PokeUtils.parsePokemonEvolutionJSON(s, mPokemon);
+                    mCallback.onPokemonSpeciesLoadFinished(pokemon);
+                }
             }
             catch(Exception e){
                 e.printStackTrace();
