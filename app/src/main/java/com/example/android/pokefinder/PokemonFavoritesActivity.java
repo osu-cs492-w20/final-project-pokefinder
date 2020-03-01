@@ -64,4 +64,10 @@ public class PokemonFavoritesActivity extends AppCompatActivity implements Pokem
             startActivity(intent);
         }
     }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        mSavedPokemonViewModel.loadPokemonResults();
+    }
 }
