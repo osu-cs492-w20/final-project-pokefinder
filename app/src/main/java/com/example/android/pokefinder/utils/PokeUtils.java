@@ -78,11 +78,12 @@ public class PokeUtils {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 
-    public static Pokemon parsePokemonEvolutionJSON(String PokemonEvolutionJSON, Pokemon pokemon){
+    public static Pokemon parsePokemonEvolutionJSON(String PokemonEvolutionJSON){
         Gson gson = new Gson();
         PokemonEvolutionResults results = gson.fromJson(PokemonEvolutionJSON, PokemonEvolutionResults.class);
 
         if (results != null) {
+            Pokemon pokemon = new Pokemon();
             if (results.evolves_from_species != null) {
                 pokemon.evolves_from = results.evolves_from_species.name;
             } else{

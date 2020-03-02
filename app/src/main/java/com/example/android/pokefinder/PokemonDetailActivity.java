@@ -2,6 +2,7 @@ package com.example.android.pokefinder;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.android.pokefinder.data.Pokemon;
+import com.example.android.pokefinder.data.Status;
 import com.example.android.pokefinder.utils.PokeUtils;
 
 import java.util.List;
@@ -38,6 +40,7 @@ public class PokemonDetailActivity extends AppCompatActivity{
     private ImageView mPokemonEvolvesFromIconIV;
 
     private SavedPokemonViewModel mViewModel;
+    private PokemonViewModel mViewModelForSearch;
 
     private Toast mToast;
     private Pokemon mPokemon;
@@ -72,6 +75,20 @@ public class PokemonDetailActivity extends AppCompatActivity{
 
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra(EXTRA_POKEMON)) {
+
+            mViewModelForSearch = new ViewModelProvider(this).get(PokemonViewModel.class);
+
+            mViewModelForSearch.getLoadingStatus().observe(this, new Observer<Status>() {
+                @Override
+                public void onChanged(Status status) {
+                    if (status == Status.SUCCESS) {
+                        Pokemon pokemon = mViewModelForSearch.getSearchResults().getValue();
+                        onPokemonSearched(pokemon);
+                    }
+                }
+            });
+
+
             mPokemon = (Pokemon) intent.getSerializableExtra(EXTRA_POKEMON);
 
             mEvolvesFromTV = findViewById(R.id.tv_evolves_from);
@@ -81,6 +98,23 @@ public class PokemonDetailActivity extends AppCompatActivity{
              */
             if(mPokemon.evolves_from != null) {
                 mEvolvesFromTV.setText(PokeUtils.capitalizeFirstLetter(mPokemon.evolves_from));
+                mPokemonEvolvesFromIconIV = findViewById(R.id.pokemon_evolve_from_image);
+
+                String iconEvolveFromURL = PokeUtils.buildPokemonIconURL(Integer.toString(mPokemon.evolves_from_id));
+                Glide.with(this).load(iconEvolveFromURL).into(mPokemonEvolvesFromIconIV);
+
+                mPokemonEvolvesFromIconIV.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        doPokemonSearch(mPokemon.evolves_from);
+                    }
+                });
+                mEvolvesFromTV.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        doPokemonSearch(mPokemon.evolves_from);
+                    }
+                });
             }
             /*
              * This pokemon is at the base of the evolution tree.
@@ -101,15 +135,28 @@ public class PokemonDetailActivity extends AppCompatActivity{
 
             String iconURL = PokeUtils.buildPokemonIconURL(Integer.toString(mPokemon.id));
 
-            Log.d(TAG, mPokemon.types.get(0));
+
             mPokemonTypeAdapter.updatePokemonTypes(mPokemon.types);
 
             mPokemonIconIV = findViewById(R.id.pokemon_image);
             Glide.with(this).load(iconURL).into(mPokemonIconIV);
+
+
         }
 
         mViewModel.loadPokemonResults();
     }
+
+
+    public void onPokemonSearched(Pokemon pokemon) {
+        if(pokemon != null) {
+            Intent intent = new Intent(this, PokemonDetailActivity.class);
+            intent.putExtra(PokemonDetailActivity.EXTRA_POKEMON, pokemon);
+            startActivity(intent);
+        }
+    }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -169,5 +216,9 @@ public class PokemonDetailActivity extends AppCompatActivity{
         }
         mToast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
         mToast.show();
+    }
+
+    private void doPokemonSearch(String searchQuery) {
+        mViewModelForSearch.loadSearchResults(searchQuery);
     }
 }

@@ -15,6 +15,7 @@ class LoadPokemonTask extends AsyncTask<Void, Void, String> {
     public interface AsyncCallback {
         void onPokemonLoadFinished(Pokemon mPokemon);
         void onPokemonSpeciesLoadFinished(Pokemon mPokemon);
+        void onPokemonEvolveLoadFinished(Pokemon mPokemon);
     }
 
     private Pokemon mPokemon;
@@ -22,11 +23,10 @@ class LoadPokemonTask extends AsyncTask<Void, Void, String> {
     private String mRequestType;
     private AsyncCallback mCallback;
 
-    LoadPokemonTask(String url, String requestType, Pokemon pokemon, AsyncCallback callback) {
+    LoadPokemonTask(String url, String requestType, AsyncCallback callback) {
         mRequestType = requestType;
         mURL = url;
         mCallback = callback;
-        mPokemon = pokemon;
     }
 
     @Override
@@ -50,8 +50,12 @@ class LoadPokemonTask extends AsyncTask<Void, Void, String> {
                     mCallback.onPokemonLoadFinished(pokemon);
                 }
                 else if(mRequestType.equals("pokemon-species")){
-                    pokemon = PokeUtils.parsePokemonEvolutionJSON(s, mPokemon);
+                    pokemon = PokeUtils.parsePokemonEvolutionJSON(s);
                     mCallback.onPokemonSpeciesLoadFinished(pokemon);
+                }
+                else if(mRequestType.equals("pokemon-evolve")){
+                    pokemon = PokeUtils.parsePokemonJSON(s);
+                    mCallback.onPokemonEvolveLoadFinished(pokemon);
                 }
             }
             catch(Exception e){

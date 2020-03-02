@@ -18,6 +18,7 @@ public class PokemonRepository implements LoadPokemonTask.AsyncCallback {
     private MutableLiveData<Status> mLoadingStatus;
 
     private String mCurrentPokemonName;
+    private int mCompletedTargets;
 
     public PokemonRepository() {
         mPokemon = new MutableLiveData<>();
@@ -26,18 +27,23 @@ public class PokemonRepository implements LoadPokemonTask.AsyncCallback {
         mLoadingStatus = new MutableLiveData<>();
         mLoadingStatus.setValue(Status.SUCCESS);
 
+        mCompletedTargets = 0;
         mCurrentPokemonName = null;
     }
 
 
     public void loadPokemon(String pokemonName) {
+        mCompletedTargets = 0;
         mLoadingStatus.setValue(Status.LOADING);
         if (shouldFetchPokemon(pokemonName)) {
             mCurrentPokemonName = pokemonName;
             mPokemon.setValue(null);
             String url = PokeUtils.buildPokemonURL(pokemonName);
             Log.d(TAG, "fetching new pokemon data with this URL: " + url);
-            new LoadPokemonTask(url, "pokemon", null, this).execute();
+            new LoadPokemonTask(url, "pokemon",  this).execute();
+            String species_url = PokeUtils.buildPokemonSpeciesURL(mCurrentPokemonName);
+            Log.d(TAG, "fetching new pokemon species data with this URL: " + species_url);
+            new LoadPokemonTask(species_url, "pokemon-species", this).execute();
         } else {
             mLoadingStatus.setValue(Status.SUCCESS);
             Log.d(TAG, "using cached pokemon data");
@@ -74,19 +80,45 @@ public class PokemonRepository implements LoadPokemonTask.AsyncCallback {
         if (pokemon == null) {
             mLoadingStatus.setValue(Status.ERROR);
         } else {
-            String species_url = PokeUtils.buildPokemonSpeciesURL(mCurrentPokemonName);
-            Log.d(TAG, "fetching new pokemon species data with this URL: " + species_url);
-            new LoadPokemonTask(species_url, "pokemon-species", pokemon, this).execute();
+            mCompletedTargets += 1;
+            if(mCompletedTargets == 2){
+                mLoadingStatus.setValue(Status.SUCCESS);
+            }
+        }
+    }
+
+    @Override
+    public void onPokemonEvolveLoadFinished(Pokemon pokemon) {
+        Pokemon tempPokemon = mPokemon.getValue();
+        if (pokemon == null) {
+            mLoadingStatus.setValue(Status.ERROR);
+        } else {
+            if (tempPokemon == null){tempPokemon = new Pokemon();}
+            tempPokemon.evolves_from_id  = pokemon.id;
+            tempPokemon.evolves_from = pokemon.name;
+            mCompletedTargets += 1;
+            if(mCompletedTargets == 2){
+                mLoadingStatus.setValue(Status.SUCCESS);
+            }
         }
     }
 
     @Override
     public void onPokemonSpeciesLoadFinished(Pokemon pokemon) {
-        mPokemon.setValue(pokemon);
         if (pokemon == null) {
             mLoadingStatus.setValue(Status.ERROR);
         } else {
-            mLoadingStatus.setValue(Status.SUCCESS);
+            if(pokemon.evolves_from != null) {
+                String url = PokeUtils.buildPokemonURL(pokemon.evolves_from);
+                Log.d(TAG, "fetching new pokemon evolution data with this URL: " + url);
+                new LoadPokemonTask(url, "pokemon-evolve", this).execute();
+            }
+            else{
+                mCompletedTargets += 1;
+                if(mCompletedTargets == 2) {
+                    mLoadingStatus.setValue(Status.SUCCESS);
+                }
+            }
         }
     }
 }

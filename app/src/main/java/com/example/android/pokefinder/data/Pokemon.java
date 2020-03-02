@@ -20,7 +20,8 @@ public class Pokemon implements Serializable {
     public int weight;
     public int height;
 
-    public String evolves_from;
+    public String evolves_from = null;
+    public int evolves_from_id;
 
     public ArrayList<String> types;
 
