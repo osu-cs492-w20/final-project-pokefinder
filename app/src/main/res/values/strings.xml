@@ -2,12 +2,22 @@
     <string name="app_name">Poke Finder</string>
 
     <string name="search_button_text">Search for this Pokemon</string>
-    <string name="search_box_hint">Enter a Pokemon...</string>
+    <string name="search_box_hint">Enter a Pokemon…</string>
 
     <string name="pokemon_name_sample_text">Pikachu</string>
     <string name="pokemon_weight_sample_text">Weight</string>
     <string name="pokemon_height_sample_text">Height</string>
+    <string name="pokemon_type_text">Type</string>
 
     <string name="action_favorite">Favorite this Pokemon</string>
     <string name="loading_error">This Pokemon cannot be found. Check your WiFi connection.</string>
+
+    <string name="action_list_favorites">View favorites</string>
+    <string name="favorites">Favorites</string>
+    <string name="defaut_sample_text">Sample Text</string>
+
+    <string name="evolves_from">Evolves from</string>
+    <string name="no_evolution_from">[None]</string>
+
+    <string name="picture_content_description">Image of Pokemon</string>
 </resources>

@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity{
 
     private PokemonViewModel mViewModel;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,13 +44,6 @@ public class MainActivity extends AppCompatActivity{
 
         mViewModel = new ViewModelProvider(this).get(PokemonViewModel.class);
 
-        mViewModel.getSearchResults().observe(this, new Observer<Pokemon>() {
-            @Override
-            public void onChanged(Pokemon pokemon) {
-                onPokemonSearched(pokemon);
-            }
-        });
-
         mViewModel.getLoadingStatus().observe(this, new Observer<Status>() {
             @Override
             public void onChanged(Status status) {
@@ -59,6 +51,8 @@ public class MainActivity extends AppCompatActivity{
                     mLoadingIndicatorPB.setVisibility(View.VISIBLE);
                 } else if (status == Status.SUCCESS) {
                     mLoadingIndicatorPB.setVisibility(View.INVISIBLE);
+                    Pokemon pokemon = mViewModel.getSearchResults().getValue();
+                    onPokemonSearched(pokemon);
                 } else {
                     mLoadingIndicatorPB.setVisibility(View.INVISIBLE);
                     mErrorMessageTV.setVisibility(View.VISIBLE);
@@ -72,12 +66,10 @@ public class MainActivity extends AppCompatActivity{
             public void onClick(View v) {
                 String searchQuery = mSearchBoxET.getText().toString();
                 if (!TextUtils.isEmpty(searchQuery)) {
-                    doGitHubSearch(searchQuery);
+                    doPokemonSearch(searchQuery);
                 }
             }
         });
-
-
     }
 
     public void onPokemonSearched(Pokemon pokemon) {
@@ -88,10 +80,25 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_favorites:
+                Intent favoritesIntent = new Intent(this, PokemonFavoritesActivity.class);
+                startActivity(favoritesIntent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
-    private void doGitHubSearch(String searchQuery) {
-
+    private void doPokemonSearch(String searchQuery) {
         mViewModel.loadSearchResults(searchQuery);
     }
 }
