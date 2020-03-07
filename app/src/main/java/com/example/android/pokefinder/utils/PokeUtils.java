@@ -20,6 +20,7 @@ public class PokeUtils {
     private final static String POKE_BASE_URL = "https://pokeapi.co/api/v2/";
     private final static String POKE_POKEMON_PATH = "pokemon";
     private final static String POKE_POKEMON_SPECIES_PATH = "pokemon-species";
+    private final static String POKE_POKEMON_EVOLUTION_PATH = "evolution-chain";
     private final static String POKE_URL_FORMAT_STR = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/%s.png";
 
 
