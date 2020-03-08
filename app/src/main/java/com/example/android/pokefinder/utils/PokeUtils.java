@@ -20,7 +20,6 @@ public class PokeUtils {
     private final static String POKE_BASE_URL = "https://pokeapi.co/api/v2/";
     private final static String POKE_POKEMON_PATH = "pokemon";
     private final static String POKE_POKEMON_SPECIES_PATH = "pokemon-species";
-    private final static String POKE_POKEMON_EVOLUTION_PATH = "evolution-chain";
     private final static String POKE_URL_FORMAT_STR = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/%s.png";
 
 
@@ -39,12 +38,26 @@ public class PokeUtils {
         ArrayList<PokemonType> types;
     }
 
-    static class PokemonEvolutionResults{
+    static class PokemonSpeciesResults{
         PokemonSpecies evolves_from_species;
+        PokeURL evolution_chain;
+    }
+
+    static class PokeURL {
+        String url;
     }
 
     static class PokemonSpecies{
         String name;
+    }
+
+    static class PokemonEvolutionResults{
+        PokemonChain chain;
+    }
+
+    static class PokemonChain{
+        ArrayList<PokemonChain> evolves_to;
+        PokemonSpecies species;
     }
 
     static class PokemonType {
@@ -79,46 +92,73 @@ public class PokeUtils {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 
-    public static Pokemon parsePokemonEvolutionJSON(String PokemonEvolutionJSON){
+    public static Pokemon parsePokemonEvolutionJSON(String EvolutionJSON, String pokemonName, Pokemon pokemon_to_modify){
         Gson gson = new Gson();
-        PokemonEvolutionResults results = gson.fromJson(PokemonEvolutionJSON, PokemonEvolutionResults.class);
+        PokemonEvolutionResults results = gson.fromJson(EvolutionJSON, PokemonEvolutionResults.class);
+
+        String prevName = null;
+        if(results != null){
+            PokemonChain myChainLink = results.chain;
+            Boolean end_of_chain = false;
+
+            while (!end_of_chain) {
+                if (pokemonName.toLowerCase().equals(myChainLink.species.name.toLowerCase())) {
+                    pokemon_to_modify.evolves_from = prevName;
+                    pokemon_to_modify.evolves_to = null;
+                    if (myChainLink.evolves_to.size() == 1) {
+                        pokemon_to_modify.evolves_to = myChainLink.evolves_to.get(0).species.name;
+                    }
+                }
+                end_of_chain = myChainLink.evolves_to.size() == 0;
+
+                if (!end_of_chain){
+                    prevName = myChainLink.species.name;
+                    myChainLink = myChainLink.evolves_to.get(0);
+                }
+
+
+            }
+
+        }
+
+        return pokemon_to_modify;
+    }
+
+
+    public static Pokemon parsePokemonJSON(String PokemonJSON, String PokemonSpeciesJSON) {
+        if(PokemonJSON.equals("Not Found")){
+            return null;
+        }
+        Gson gson = new Gson();
+        PokemonResults results = gson.fromJson(PokemonJSON, PokemonResults.class);
+        PokemonSpeciesResults speciesResults = null;
+        if (PokemonSpeciesJSON != null) {
+            speciesResults = gson.fromJson(PokemonSpeciesJSON, PokemonSpeciesResults.class);
+        }
 
         if (results != null) {
             Pokemon pokemon = new Pokemon();
-            if (results.evolves_from_species != null) {
-                pokemon.evolves_from = results.evolves_from_species.name;
-            } else{
-                pokemon.evolves_from = null;
+
+            pokemon.id = results.id;
+            pokemon.name = results.name;
+
+            pokemon.weight = results.weight;
+            pokemon.height = results.height;
+
+            pokemon.types = new ArrayList<>();
+
+            for(PokemonType typeItem: results.types){
+                pokemon.types.add(typeItem.type.name);
             }
+
+            if (speciesResults != null){
+                pokemon.evolution_chain_url = speciesResults.evolution_chain.url;
+            }
+
             return pokemon;
         } else {
             return null;
         }
-    }
-
-    public static Pokemon parsePokemonJSON(String PokemonJSON) {
-        Gson gson = new Gson();
-            PokemonResults results = gson.fromJson(PokemonJSON, PokemonResults.class);
-
-            if (results != null) {
-                Pokemon mPokemon = new Pokemon();
-
-                mPokemon.id = results.id;
-                mPokemon.name = results.name;
-
-                mPokemon.weight = results.weight;
-                mPokemon.height = results.height;
-
-                mPokemon.types = new ArrayList<>();
-
-                for(PokemonType typeItem: results.types){
-                    mPokemon.types.add(typeItem.type.name);
-                }
-
-                return mPokemon;
-            } else {
-                return null;
-            }
     }
 
     /*

@@ -18,6 +18,8 @@ public class PokemonViewModel extends ViewModel {
         mLoadingStatus = mRepository.getLoadingStatus();
     }
 
+    public void resetStatus(){mRepository.resetStatus();}
+
     public void loadSearchResults(String query) {
         mRepository.loadPokemon(query);
     }

@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.pokefinder.data.Pokemon;
 import com.example.android.pokefinder.data.Status;
@@ -53,7 +54,7 @@ public class MainActivity extends AppCompatActivity{
                     mLoadingIndicatorPB.setVisibility(View.INVISIBLE);
                     Pokemon pokemon = mViewModel.getSearchResults().getValue();
                     onPokemonSearched(pokemon);
-                } else {
+                } else if (status == Status.ERROR) {
                     mLoadingIndicatorPB.setVisibility(View.INVISIBLE);
                     mErrorMessageTV.setVisibility(View.VISIBLE);
                 }
@@ -68,6 +69,9 @@ public class MainActivity extends AppCompatActivity{
                 if (!TextUtils.isEmpty(searchQuery)) {
                     doPokemonSearch(searchQuery);
                 }
+                else{
+                    makeToast("Please enter a Pokemon first.");
+                }
             }
         });
     }
@@ -78,6 +82,17 @@ public class MainActivity extends AppCompatActivity{
             intent.putExtra(PokemonDetailActivity.EXTRA_POKEMON, pokemon);
             startActivity(intent);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+    }
+
+    private void makeToast(String message){
+        Toast toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
+        toast.show();
     }
 
     @Override

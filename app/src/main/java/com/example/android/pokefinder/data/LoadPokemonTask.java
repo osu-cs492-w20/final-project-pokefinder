@@ -9,59 +9,61 @@ import com.example.android.pokefinder.utils.PokeUtils;
 
 import java.io.IOException;
 
-class LoadPokemonTask extends AsyncTask<Void, Void, String> {
+class LoadPokemonTask extends AsyncTask<Void, Void, Pokemon> {
     private static final String TAG = LoadPokemonTask.class.getSimpleName();
 
     public interface AsyncCallback {
-        void onPokemonLoadFinished(Pokemon mPokemon);
-        void onPokemonSpeciesLoadFinished(Pokemon mPokemon);
-        void onPokemonEvolveLoadFinished(Pokemon mPokemon);
+        void onPokemonLoadFinished(Pokemon pokemon);
     }
 
-    private Pokemon mPokemon;
-    private String mURL;
-    private String mRequestType;
+    private String mPokemonName;
     private AsyncCallback mCallback;
 
-    LoadPokemonTask(String url, String requestType, AsyncCallback callback) {
-        mRequestType = requestType;
-        mURL = url;
+    LoadPokemonTask(String name, AsyncCallback callback) {
+        mPokemonName = name;
         mCallback = callback;
     }
 
     @Override
-    protected String doInBackground(Void... voids) {
-        String pokemonJSON = null;
+    protected Pokemon doInBackground(Void... voids) {
+        Pokemon new_pokemon;
         try {
-            pokemonJSON = NetworkUtils.doHTTPGet(mURL);
-        } catch (IOException e) {
+            String my_url = PokeUtils.buildPokemonURL(mPokemonName);
+            String pokemonJSON = NetworkUtils.doHTTPGet(my_url);
+
+
+            String my_species_url = PokeUtils.buildPokemonSpeciesURL(mPokemonName);
+            String pokemonSpeciesJSON = NetworkUtils.doHTTPGet(my_species_url);
+
+            new_pokemon = PokeUtils.parsePokemonJSON(pokemonJSON, pokemonSpeciesJSON);
+
+            String pokemonEvolutionJSON = NetworkUtils.doHTTPGet(new_pokemon.evolution_chain_url);
+
+            new_pokemon = PokeUtils.parsePokemonEvolutionJSON(pokemonEvolutionJSON, new_pokemon.name, new_pokemon);
+
+            if (new_pokemon.evolves_from != null){
+                String evolves_from_pokemon_url = PokeUtils.buildPokemonURL(new_pokemon.evolves_from);
+                String evolves_fromJSON = NetworkUtils.doHTTPGet(evolves_from_pokemon_url);
+                Pokemon evolves_from_pokemon = PokeUtils.parsePokemonJSON(evolves_fromJSON, null);
+                new_pokemon.evolves_from_id = evolves_from_pokemon.id;
+            }
+            if (new_pokemon.evolves_to != null){
+                String evolves_to_pokemon_url = PokeUtils.buildPokemonURL(new_pokemon.evolves_to);
+                String evolves_toJSON = NetworkUtils.doHTTPGet(evolves_to_pokemon_url);
+                Pokemon evolves_to_pokemon = PokeUtils.parsePokemonJSON(evolves_toJSON, null);
+                new_pokemon.evolves_to_id = evolves_to_pokemon.id;
+            }
+
+
+        } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
-        return pokemonJSON;
+        return new_pokemon;
     }
 
     @Override
-    protected void onPostExecute(String s) {
-        if (s != null) {
-            try {
-                Pokemon pokemon;
-                if (mRequestType.equals("pokemon")) {
-                    pokemon = PokeUtils.parsePokemonJSON(s);
-                    mCallback.onPokemonLoadFinished(pokemon);
-                }
-                else if(mRequestType.equals("pokemon-species")){
-                    pokemon = PokeUtils.parsePokemonEvolutionJSON(s);
-                    mCallback.onPokemonSpeciesLoadFinished(pokemon);
-                }
-                else if(mRequestType.equals("pokemon-evolve")){
-                    pokemon = PokeUtils.parsePokemonJSON(s);
-                    mCallback.onPokemonEvolveLoadFinished(pokemon);
-                }
-            }
-            catch(Exception e){
-                e.printStackTrace();
-                mCallback.onPokemonLoadFinished(null);
-            }
-        }
+    protected void onPostExecute(Pokemon poke) {
+        mCallback.onPokemonLoadFinished(poke);
     }
 }

@@ -154,6 +154,7 @@
                                 android:id="@+id/pokemon_evolve_to_image"
                                 android:src="@drawable/ic_launcher_background"
                                 android:layout_gravity="center_horizontal"
+                                android:background="@drawable/ic_launcher_background"
                                 android:contentDescription="@string/picture_content_description"
                                 android:layout_width="100dp"
                                 android:layout_height="100dp" />

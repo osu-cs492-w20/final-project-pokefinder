@@ -26,6 +26,8 @@ public class Pokemon implements Serializable {
     public String evolves_to = null;
     public int evolves_to_id;
 
+    public String evolution_chain_url;
+
     public ArrayList<String> types;
 
     @Override
