@@ -32,12 +32,16 @@ public class MainActivity extends AppCompatActivity{
     private ProgressBar mLoadingIndicatorPB;
     private TextView mErrorMessageTV;
 
+    Toast mToast;
+
     private PokemonViewModel mViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mToast = null;
 
         mSearchBoxET = findViewById(R.id.pokemon_name_search_box);
         mLoadingIndicatorPB = findViewById(R.id.pb_loading_indicator);
@@ -88,11 +92,16 @@ public class MainActivity extends AppCompatActivity{
     public void onResume() {
         super.onResume();
 
+        mViewModel.resetStatus();
+
     }
 
     private void makeToast(String message){
-        Toast toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
-        toast.show();
+        if(mToast != null){
+            mToast.cancel();
+        }
+        mToast = Toast.makeText(this, message, Toast.LENGTH_LONG);
+        mToast.show();
     }
 
     @Override
