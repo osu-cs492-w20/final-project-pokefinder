@@ -28,12 +28,12 @@ class LoadPokemonTask extends AsyncTask<Void, Void, Pokemon> {
     protected Pokemon doInBackground(Void... voids) {
         Pokemon new_pokemon;
         try {
-            String my_url = PokeUtils.buildPokemonURL(mPokemonName);
-            String pokemonJSON = NetworkUtils.doHTTPGet(my_url);
-
-
             String my_species_url = PokeUtils.buildPokemonSpeciesURL(mPokemonName);
             String pokemonSpeciesJSON = NetworkUtils.doHTTPGet(my_species_url);
+
+            String my_url = PokeUtils.parseForVarieties(pokemonSpeciesJSON);
+
+            String pokemonJSON = NetworkUtils.doHTTPGet(my_url);
 
             new_pokemon = PokeUtils.parsePokemonJSON(pokemonJSON, pokemonSpeciesJSON);
 
