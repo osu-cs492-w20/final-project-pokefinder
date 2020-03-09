@@ -6,5 +6,6 @@ package com.example.android.pokefinder.data;
 public enum Status {
     LOADING,
     ERROR,
-    SUCCESS
+    SUCCESS,
+    INITIAL
 }

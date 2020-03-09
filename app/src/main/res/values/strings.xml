@@ -17,7 +17,8 @@
     <string name="defaut_sample_text">Sample Text</string>
 
     <string name="evolves_from">Evolves from</string>
-    <string name="no_evolution_from">[None]</string>
+    <string name="evolves_to">Evolves into</string>
+    <string name="no_evolution_form">[None]</string>
 
     <string name="picture_content_description">Image of Pokemon</string>
 </resources>

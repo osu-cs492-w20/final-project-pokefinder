@@ -36,8 +36,10 @@ public class PokemonDetailActivity extends AppCompatActivity{
     private TextView mWeightTV;
     private TextView mNameTV;
     private TextView mEvolvesFromTV;
+    private TextView mEvolvesToTV;
     private ImageView mPokemonIconIV;
     private ImageView mPokemonEvolvesFromIconIV;
+    private ImageView mPokemonEvolvesToIconIV;
 
     private SavedPokemonViewModel mViewModel;
     private PokemonViewModel mViewModelForSearch;
@@ -87,12 +89,16 @@ public class PokemonDetailActivity extends AppCompatActivity{
                     }
                 }
             });
+            mViewModelForSearch.resetStatus();
 
 
             mPokemon = (Pokemon) intent.getSerializableExtra(EXTRA_POKEMON);
 
             mEvolvesFromTV = findViewById(R.id.tv_evolves_from);
             mPokemonEvolvesFromIconIV = findViewById(R.id.pokemon_evolve_from_image);
+
+            mEvolvesToTV = findViewById(R.id.tv_evolves_to);
+            mPokemonEvolvesToIconIV = findViewById(R.id.pokemon_evolve_to_image);
             /*
              * This pokemon evolves from another pokemon
              */
@@ -116,13 +122,43 @@ public class PokemonDetailActivity extends AppCompatActivity{
                     }
                 });
             }
-            /*
-             * This pokemon is at the base of the evolution tree.
-             */
             else{
-                mEvolvesFromTV.setText(R.string.no_evolution_from);
+                /*
+                 * This pokemon is at the base of the evolution tree.
+                 */
+                mEvolvesFromTV.setText(R.string.no_evolution_form);
                 mPokemonEvolvesFromIconIV.setVisibility(View.GONE);
             }
+
+            if(mPokemon.evolves_to != null) {
+                mEvolvesToTV.setText(PokeUtils.capitalizeFirstLetter(mPokemon.evolves_to));
+                mPokemonEvolvesToIconIV = findViewById(R.id.pokemon_evolve_to_image);
+
+                String iconEvolveToURL = PokeUtils.buildPokemonIconURL(Integer.toString(mPokemon.evolves_to_id));
+                Glide.with(this).load(iconEvolveToURL).into(mPokemonEvolvesToIconIV);
+
+                mPokemonEvolvesToIconIV.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        doPokemonSearch(mPokemon.evolves_to);
+                    }
+                });
+                mEvolvesToTV.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        doPokemonSearch(mPokemon.evolves_to);
+                    }
+                });
+            }
+            else{
+                /*
+                 * This pokemon is at the top of the evolution tree.
+                 */
+                mEvolvesToTV.setText(R.string.no_evolution_form);
+                mPokemonEvolvesToIconIV.setVisibility(View.GONE);
+            }
+
+
 
             mNameTV = findViewById(R.id.name);
             mNameTV.setText(PokeUtils.capitalizeFirstLetter(mPokemon.name));
@@ -155,7 +191,13 @@ public class PokemonDetailActivity extends AppCompatActivity{
             startActivity(intent);
         }
     }
+    @Override
+    public void onResume() {
+        super.onResume();
 
+        mViewModelForSearch.resetStatus();
+
+    }
 
 
     @Override
@@ -165,6 +207,7 @@ public class PokemonDetailActivity extends AppCompatActivity{
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_action_home);
 
         mOptionsMenu = menu;
 
@@ -204,7 +247,9 @@ public class PokemonDetailActivity extends AppCompatActivity{
                 }
                 return true;
             case android.R.id.home:
-                onBackPressed();
+                Intent i=new Intent(this, MainActivity.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(i);
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -219,6 +264,8 @@ public class PokemonDetailActivity extends AppCompatActivity{
     }
 
     private void doPokemonSearch(String searchQuery) {
-        mViewModelForSearch.loadSearchResults(searchQuery);
+        if(Status.INITIAL == mViewModelForSearch.getLoadingStatus().getValue()) {
+            mViewModelForSearch.loadSearchResults(searchQuery);
+        }
     }
 }
