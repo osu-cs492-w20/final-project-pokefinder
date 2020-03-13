@@ -39,7 +39,7 @@ class LoadPokemonTask extends AsyncTask<Void, Void, Pokemon> {
 
             String pokemonEvolutionJSON = NetworkUtils.doHTTPGet(new_pokemon.evolution_chain_url);
 
-            new_pokemon = PokeUtils.parsePokemonEvolutionJSON(pokemonEvolutionJSON, new_pokemon.name, new_pokemon);
+            new_pokemon = PokeUtils.parsePokemonEvolutionJSON(pokemonEvolutionJSON, mPokemonName, new_pokemon);
 
             if (new_pokemon.evolves_from != null){
                 String evolves_from_pokemon_url = PokeUtils.buildPokemonURL(new_pokemon.evolves_from);

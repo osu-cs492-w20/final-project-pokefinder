@@ -52,6 +52,7 @@ public class PokeUtils {
         PokemonSpecies evolves_from_species;
         PokeURL evolution_chain;
         List<PokemonVariety> varieties;
+        String name;
     }
 
     static class PokeURL {
@@ -165,7 +166,6 @@ public class PokeUtils {
             Pokemon pokemon = new Pokemon();
 
             pokemon.id = results.id;
-            pokemon.name = results.name;
 
             pokemon.weight = results.weight;
             pokemon.height = results.height;
@@ -177,6 +177,7 @@ public class PokeUtils {
             }
 
             if (speciesResults != null){
+                pokemon.name = speciesResults.name;
                 pokemon.evolution_chain_url = speciesResults.evolution_chain.url;
             }
 
