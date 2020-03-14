@@ -1,25 +1,20 @@
 package com.example.android.pokefinder;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProvider;
-
-import android.app.ActionBar;
-import android.os.Bundle;
-import android.util.Log;
-import android.widget.Button;
-import android.view.View;
-import android.text.TextUtils;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.android.pokefinder.data.Pokemon;
 import com.example.android.pokefinder.data.Status;
@@ -32,6 +27,8 @@ public class MainActivity extends AppCompatActivity{
     private ProgressBar mLoadingIndicatorPB;
     private TextView mErrorMessageTV;
 
+    Toast mToast;
+
     private PokemonViewModel mViewModel;
 
     @Override
@@ -39,12 +36,15 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mToast = null;
+
         mSearchBoxET = findViewById(R.id.pokemon_name_search_box);
         mLoadingIndicatorPB = findViewById(R.id.pb_loading_indicator);
         mErrorMessageTV = findViewById(R.id.tv_error_message);
 
         mViewModel = new ViewModelProvider(this).get(PokemonViewModel.class);
 
+        mViewModel.resetStatus();
         mViewModel.getLoadingStatus().observe(this, new Observer<Status>() {
             @Override
             public void onChanged(Status status) {
@@ -57,17 +57,20 @@ public class MainActivity extends AppCompatActivity{
                 } else if (status == Status.ERROR) {
                     mLoadingIndicatorPB.setVisibility(View.INVISIBLE);
                     mErrorMessageTV.setVisibility(View.VISIBLE);
+                    mViewModel.resetStatus();
                 }
             }
         });
 
-        Button searchButton = findViewById(R.id.btn_pokemon_name_search);
+        final Button searchButton = findViewById(R.id.btn_pokemon_name_search);
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String searchQuery = mSearchBoxET.getText().toString();
                 if (!TextUtils.isEmpty(searchQuery)) {
-                    doPokemonSearch(searchQuery);
+                    if(mViewModel.getLoadingStatus().getValue() == Status.INITIAL) {
+                        doPokemonSearch(searchQuery);
+                    }
                 }
                 else{
                     makeToast("Please enter a Pokemon first.");
@@ -88,11 +91,16 @@ public class MainActivity extends AppCompatActivity{
     public void onResume() {
         super.onResume();
 
+        mViewModel.resetStatus();
+
     }
 
     private void makeToast(String message){
-        Toast toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
-        toast.show();
+        if(mToast != null){
+            mToast.cancel();
+        }
+        mToast = Toast.makeText(this, message, Toast.LENGTH_LONG);
+        mToast.show();
     }
 
     @Override

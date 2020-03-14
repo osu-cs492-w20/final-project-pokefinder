@@ -16,6 +16,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -59,19 +60,25 @@ public class PokemonDetailActivity extends AppCompatActivity{
 
         mPokemonTypesRV = findViewById(R.id.rv_pokemon_types);
 
-        mViewModel = new ViewModelProvider(this).get(SavedPokemonViewModel.class);
 
-        LinearLayoutManager horizontalLayout
-                = new LinearLayoutManager(
-                this,
-                LinearLayoutManager.HORIZONTAL,
-                false);
-        mPokemonTypesRV.setLayoutManager(horizontalLayout);
-        //mPokemonTypesRV.setLayoutManager(layoutManager);
-        mPokemonTypesRV.setHasFixedSize(true);
 
         mPokemonTypeAdapter = new PokemonTypeAdapter();
         mPokemonTypesRV.setAdapter(mPokemonTypeAdapter);
+
+        GridLayoutManager horizontalLayout
+                = new GridLayoutManager(this, 1, GridLayoutManager.HORIZONTAL, false);
+        mPokemonTypesRV.setLayoutManager(horizontalLayout);
+        mPokemonTypesRV.setHasFixedSize(true);
+
+//        mPokemonTypesRV.setLayoutManager(new GridLayoutManager(this, 1));
+//        mPokemonTypesRV.setHasFixedSize(true);
+
+        mViewModel = new ViewModelProvider(this).get(SavedPokemonViewModel.class);
+
+
+
+
+
 
         mToast = null;
 

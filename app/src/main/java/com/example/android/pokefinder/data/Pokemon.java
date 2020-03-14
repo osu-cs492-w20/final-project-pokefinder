@@ -1,6 +1,7 @@
 package com.example.android.pokefinder.data;
 
 import androidx.room.PrimaryKey;
+import androidx.room.ForeignKey;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

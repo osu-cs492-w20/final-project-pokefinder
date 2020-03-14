@@ -38,9 +38,21 @@ public class PokeUtils {
         ArrayList<PokemonType> types;
     }
 
+    static class PokemonVariety{
+        PokemonVarietyDescription pokemon;
+        Boolean is_default;
+    }
+
+    static class PokemonVarietyDescription{
+        String name;
+        String url;
+    }
+
     static class PokemonSpeciesResults{
         PokemonSpecies evolves_from_species;
         PokeURL evolution_chain;
+        List<PokemonVariety> varieties;
+        String name;
     }
 
     static class PokeURL {
@@ -92,6 +104,20 @@ public class PokeUtils {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 
+    public static String parseForVarieties(String PokemonSpeciesJSON){
+        Gson gson = new Gson();
+        PokemonSpeciesResults results = gson.fromJson(PokemonSpeciesJSON, PokemonSpeciesResults.class);
+
+        if (results != null) {
+            for (PokemonVariety varietyItem : results.varieties) {
+                if (varietyItem.is_default) {
+                    return varietyItem.pokemon.url;
+                }
+            }
+        }
+        return null;
+    }
+
     public static Pokemon parsePokemonEvolutionJSON(String EvolutionJSON, String pokemonName, Pokemon pokemon_to_modify){
         Gson gson = new Gson();
         PokemonEvolutionResults results = gson.fromJson(EvolutionJSON, PokemonEvolutionResults.class);
@@ -140,7 +166,6 @@ public class PokeUtils {
             Pokemon pokemon = new Pokemon();
 
             pokemon.id = results.id;
-            pokemon.name = results.name;
 
             pokemon.weight = results.weight;
             pokemon.height = results.height;
@@ -152,6 +177,7 @@ public class PokeUtils {
             }
 
             if (speciesResults != null){
+                pokemon.name = speciesResults.name;
                 pokemon.evolution_chain_url = speciesResults.evolution_chain.url;
             }
 
