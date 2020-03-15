@@ -1,6 +1,9 @@
 package com.example.android.pokefinder;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -255,8 +258,15 @@ public class PokemonDetailActivity extends AppCompatActivity{
                 return true;
             case android.R.id.home:
                 Intent i=new Intent(this, MainActivity.class);
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                //i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 startActivity(i);
+                finish();
+                return true;
+            case R.id.action_bulbapedia:
+                viewPokeOnWeb();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -273,6 +283,18 @@ public class PokemonDetailActivity extends AppCompatActivity{
     private void doPokemonSearch(String searchQuery) {
         if(Status.INITIAL == mViewModelForSearch.getLoadingStatus().getValue()) {
             mViewModelForSearch.loadSearchResults(searchQuery);
+        }
+    }
+
+    public void viewPokeOnWeb() {
+        if (mPokemon != null) {
+            Uri bulbapediaEntry = Uri.parse("https://bulbapedia.bulbagarden.net/wiki/" + mPokemon.name + "_(Pok%C3%A9mon)");
+            Intent webIntent = new Intent(Intent.ACTION_VIEW, bulbapediaEntry);
+            PackageManager packageManager = getPackageManager();
+            List<ResolveInfo> activities = packageManager.queryIntentActivities(webIntent, PackageManager.MATCH_DEFAULT_ONLY);
+            if (activities.size() > 0) {
+                startActivity(webIntent);
+            }
         }
     }
 }
