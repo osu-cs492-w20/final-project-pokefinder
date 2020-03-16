@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +46,8 @@ public class PokemonDetailActivity extends AppCompatActivity{
     private ImageView mPokemonIconIV;
     private ImageView mPokemonEvolvesFromIconIV;
     private ImageView mPokemonEvolvesToIconIV;
+    private TextView mErrorMessageTV;
+    private ProgressBar mLoadingIndicatorPB;
 
     private SavedPokemonViewModel mViewModel;
     private PokemonViewModel mViewModelForSearch;
@@ -63,7 +66,8 @@ public class PokemonDetailActivity extends AppCompatActivity{
         setContentView(R.layout.activity_pokemon_item_detail);
 
         mPokemonTypesRV = findViewById(R.id.rv_pokemon_types);
-
+        mLoadingIndicatorPB = findViewById(R.id.pb_loading_indicator);
+        mErrorMessageTV = findViewById(R.id.tv_error_message);
 
 
         mPokemonTypeAdapter = new PokemonTypeAdapter();
@@ -97,6 +101,12 @@ public class PokemonDetailActivity extends AppCompatActivity{
                     if (status == Status.SUCCESS) {
                         Pokemon pokemon = mViewModelForSearch.getSearchResults().getValue();
                         onPokemonSearched(pokemon);
+                    } else if (status == Status.LOADING) {
+                        mLoadingIndicatorPB.setVisibility(View.VISIBLE);
+                    } else if (status == Status.ERROR) {
+                        mLoadingIndicatorPB.setVisibility(View.GONE);
+                        mErrorMessageTV.setVisibility(View.VISIBLE);
+                        mViewModelForSearch.resetStatus();
                     }
                 }
             });

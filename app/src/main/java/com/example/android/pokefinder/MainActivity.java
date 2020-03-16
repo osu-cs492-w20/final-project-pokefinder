@@ -1,6 +1,8 @@
 package com.example.android.pokefinder;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -11,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
@@ -26,6 +29,7 @@ public class MainActivity extends AppCompatActivity{
     private EditText mSearchBoxET;
     private ProgressBar mLoadingIndicatorPB;
     private TextView mErrorMessageTV;
+    private VideoView mVideoView;
 
     Toast mToast;
 
@@ -77,6 +81,9 @@ public class MainActivity extends AppCompatActivity{
                 }
             }
         });
+
+        loadVideo();
+
     }
 
     public void onPokemonSearched(Pokemon pokemon) {
@@ -124,4 +131,18 @@ public class MainActivity extends AppCompatActivity{
     private void doPokemonSearch(String searchQuery) {
         mViewModel.loadSearchResults(searchQuery);
     }
+
+    private void loadVideo() {
+        mVideoView = (VideoView) findViewById(R.id.videoView);
+        Uri video = Uri.parse("android.resource://"+getPackageName()+"/"+R.raw.pikachu);
+        mVideoView.setVideoURI(video);
+        mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                mp.setLooping(true);
+                mp.start();
+            }
+        });
+    }
+
 }
