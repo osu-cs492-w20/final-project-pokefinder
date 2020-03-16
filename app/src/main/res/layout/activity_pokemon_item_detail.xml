@@ -60,6 +60,27 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tv_error_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:textSize="20sp"
+                    android:padding="16dp"
+                    android:visibility="gone"
+                    android:text="@string/loading_error"/>
+
+                <ProgressBar
+                    android:id="@+id/pb_loading_indicator"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:layout_gravity="top|center_horizontal"
+                    android:visibility="gone"/>
+                </FrameLayout>
+
                 <TextView
                     android:text="@string/pokemon_type_text"
                     android:textSize="20sp"

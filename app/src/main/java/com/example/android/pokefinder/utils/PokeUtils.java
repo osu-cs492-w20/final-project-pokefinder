@@ -1,16 +1,11 @@
 package com.example.android.pokefinder.utils;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
-import android.util.Log;
 
-import com.example.android.pokefinder.R;
 import com.example.android.pokefinder.data.Pokemon;
 import com.google.gson.Gson;
 
-import java.io.Serializable;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -128,7 +123,8 @@ public class PokeUtils {
             Boolean end_of_chain = false;
 
             while (!end_of_chain) {
-                if (pokemonName.toLowerCase().equals(myChainLink.species.name.toLowerCase())) {
+                if (pokemonName.toLowerCase().equals(myChainLink.species.name.toLowerCase())
+                        || pokemon_to_modify.name.toLowerCase().equals(myChainLink.species.name.toLowerCase())) {
                     pokemon_to_modify.evolves_from = prevName;
                     pokemon_to_modify.evolves_to = null;
                     if (myChainLink.evolves_to.size() == 1) {

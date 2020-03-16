@@ -1,13 +1,15 @@
 package com.example.android.pokefinder;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,7 +19,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -41,6 +42,8 @@ public class PokemonDetailActivity extends AppCompatActivity{
     private ImageView mPokemonIconIV;
     private ImageView mPokemonEvolvesFromIconIV;
     private ImageView mPokemonEvolvesToIconIV;
+    private TextView mErrorMessageTV;
+    private ProgressBar mLoadingIndicatorPB;
 
     private SavedPokemonViewModel mViewModel;
     private PokemonViewModel mViewModelForSearch;
@@ -59,7 +62,8 @@ public class PokemonDetailActivity extends AppCompatActivity{
         setContentView(R.layout.activity_pokemon_item_detail);
 
         mPokemonTypesRV = findViewById(R.id.rv_pokemon_types);
-
+        mLoadingIndicatorPB = findViewById(R.id.pb_loading_indicator);
+        mErrorMessageTV = findViewById(R.id.tv_error_message);
 
 
         mPokemonTypeAdapter = new PokemonTypeAdapter();
@@ -76,10 +80,6 @@ public class PokemonDetailActivity extends AppCompatActivity{
         mViewModel = new ViewModelProvider(this).get(SavedPokemonViewModel.class);
 
 
-
-
-
-
         mToast = null;
 
         Intent intent = getIntent();
@@ -92,10 +92,21 @@ public class PokemonDetailActivity extends AppCompatActivity{
                 public void onChanged(Status status) {
                     if (status == Status.SUCCESS) {
                         Pokemon pokemon = mViewModelForSearch.getSearchResults().getValue();
+                        mLoadingIndicatorPB.setVisibility(View.GONE);
                         onPokemonSearched(pokemon);
+                    } else if (status == Status.LOADING) {
+                        mLoadingIndicatorPB.setVisibility(View.VISIBLE);
+                    } else if (status == Status.ERROR) {
+                        mLoadingIndicatorPB.setVisibility(View.GONE);
+                        mErrorMessageTV.setVisibility(View.VISIBLE);
+                        mViewModelForSearch.resetStatus();
+                    }
+                    else if (status == Status.ERROR) {
+                        mLoadingIndicatorPB.setVisibility(View.GONE);
                     }
                 }
             });
+
             mViewModelForSearch.resetStatus();
 
 
@@ -256,7 +267,15 @@ public class PokemonDetailActivity extends AppCompatActivity{
             case android.R.id.home:
                 Intent i=new Intent(this, MainActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                //i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                //i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                //i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(i);
+                finish();
+                return true;
+            case R.id.action_bulbapedia:
+                viewPokeOnWeb();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -273,6 +292,18 @@ public class PokemonDetailActivity extends AppCompatActivity{
     private void doPokemonSearch(String searchQuery) {
         if(Status.INITIAL == mViewModelForSearch.getLoadingStatus().getValue()) {
             mViewModelForSearch.loadSearchResults(searchQuery);
+        }
+    }
+
+    public void viewPokeOnWeb() {
+        if (mPokemon != null) {
+            Uri bulbapediaEntry = Uri.parse("https://bulbapedia.bulbagarden.net/wiki/" + mPokemon.name + "_(Pok%C3%A9mon)");
+            Intent webIntent = new Intent(Intent.ACTION_VIEW, bulbapediaEntry);
+            PackageManager packageManager = getPackageManager();
+            List<ResolveInfo> activities = packageManager.queryIntentActivities(webIntent, PackageManager.MATCH_DEFAULT_ONLY);
+            if (activities.size() > 0) {
+                startActivity(webIntent);
+            }
         }
     }
 }
