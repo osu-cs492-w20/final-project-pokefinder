@@ -5,8 +5,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,11 +16,9 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.IntentCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -84,10 +80,6 @@ public class PokemonDetailActivity extends AppCompatActivity{
         mViewModel = new ViewModelProvider(this).get(SavedPokemonViewModel.class);
 
 
-
-
-
-
         mToast = null;
 
         Intent intent = getIntent();
@@ -100,6 +92,7 @@ public class PokemonDetailActivity extends AppCompatActivity{
                 public void onChanged(Status status) {
                     if (status == Status.SUCCESS) {
                         Pokemon pokemon = mViewModelForSearch.getSearchResults().getValue();
+                        mLoadingIndicatorPB.setVisibility(View.GONE);
                         onPokemonSearched(pokemon);
                     } else if (status == Status.LOADING) {
                         mLoadingIndicatorPB.setVisibility(View.VISIBLE);
@@ -108,8 +101,12 @@ public class PokemonDetailActivity extends AppCompatActivity{
                         mErrorMessageTV.setVisibility(View.VISIBLE);
                         mViewModelForSearch.resetStatus();
                     }
+                    else if (status == Status.ERROR) {
+                        mLoadingIndicatorPB.setVisibility(View.GONE);
+                    }
                 }
             });
+
             mViewModelForSearch.resetStatus();
 
 
